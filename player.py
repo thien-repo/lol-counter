@@ -40,10 +40,11 @@ def parse_player_match_history(json_response):
     ]
 
             
-def create_player_query_from_template(query_template, player_name, page):
+def create_player_query_from_template(query_template, player_name, tag_line, page):
     with open(query_template, 'r') as payload:
         data = json.load(payload) 
         data['variables']['riotUserName'] = player_name
         data['variables']['page'] = page
+        data['variables']['riotTagLine'] = tag_line
         return data
 

@@ -4,11 +4,31 @@ import json
 import requests
 import player
 from collections import Counter
+import multiprocessing
+import time
 
-def aggregate_match_history(player_name, num_pages):
+
+
+def match_history_worker(args):
+    query_data = player.create_player_query_from_template( args[0], args[1], args[2], args[3] )
+    res = requests.post(
+            config.player['url'],
+            headers=config.player['headers'],
+            json=query_data
+        )
+
+    if res.status_code != 200:
+            raise Exception(f'{player_name} page {page} failed')
+    
+    return player.parse_player_match_history(json.loads(res.text))
+
+
+
+def aggregate_match_history(player_name, tag_line, num_pages):
     match_histories = []
+
     for page in range(1, num_pages + 1):
-        query_data = player.create_player_query_from_template( config.player['templates_query'], player_name, page )
+        query_data = player.create_player_query_from_template( config.player['templates_query'], player_name, tag_line, page )
         res = requests.post(
             config.player['url'],
             headers=config.player['headers'],
@@ -67,8 +87,34 @@ def calculate_player_stats(soa):
 
     return avg_win, avg_kills, avg_deaths, avg_assists, avg_cs, avg_vision, avg_gold, most_played_champ, player_type, most_played_role
 
-match_histories = aggregate_match_history('reap', 5)
 
-soa = aos_to_soa_match_histories(match_histories)
+@dataclass
+class PlayerTag:
+    name: str 
+    tag: str
 
-print(calculate_player_stats(soa))
+def aggregate_worker(pt):
+    match_histories = aggregate_match_history(pt.name, pt.tag, 5)
+    soa = aos_to_soa_match_histories(match_histories)
+    return calculate_player_stats(soa)
+
+tags = [
+        PlayerTag(name='Reap', tag='na0'),
+        PlayerTag(name='YOXEL4796', tag='na1'),
+        PlayerTag(name='Glich', tag='SPOIL'),
+        PlayerTag(name='bidp', tag='NA2'),
+        PlayerTag(name='m8r', tag='troll'),
+    ]
+
+
+def main():
+    start = time.time()
+    with multiprocessing.Pool(len(tags)) as pool:
+        results = pool.map(aggregate_worker, tags)
+        for i in range(len(tags)):
+            print(f'{tags[i].name}#{tags[i].tag} {results[i]}')
+    end = time.time()
+    print(end - start)
+if __name__ == '__main__':
+    main()
+    
