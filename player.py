@@ -1,13 +1,19 @@
 import requests
 import json
 from bs4 import BeautifulSoup
+from dataclasses import dataclass
 
-url = "https://u.gg/api"
+@dataclass
+class MatchInfo:
+    win: bool 
+    kda: list[int]
+    vision: int
+    gold: int
+    cs: int
+    champion_id: int 
+    queue_type: str
 
-headers = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36",
-    "Content-Type": "application/json"
-}
+
 
 def get_match_history(content):
     return content['data']['fetchPlayerMatchSummaries']['matchSummaries']
@@ -22,13 +28,17 @@ def get_player_match_info(m):
             m['queueType'])
 
 
-with open('query.json', 'r') as payload:
-    data = json.load(payload)
-    res = requests.post(url, headers=headers,json=data)
-    if res.status_code == 200:
-        match_history = get_match_history(json.loads(res.text))
-        player_name = 'Reap'
-        for m in match_history:
-            win, kda, vs, gold, cs, champid, qtype = get_player_match_info(m)
-            print(win, kda, vs, gold, cs, champid, qtype)
+def parse_player_match_history(json_response, player_name):
+    match_history = get_match_history(json_response)
+    return [
+        get_player_match_info(m) for m in match_history
+    ]
+
             
+def create_player_query_from_template(query_template, player_name, page):
+    with open(query_template, 'r') as payload:
+        data = json.load(payload) 
+        data['riotUserName'] = player_name
+        data['page'] = page
+        return data
+
