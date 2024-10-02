@@ -7,8 +7,6 @@ from collections import Counter
 import multiprocessing
 import time
 
-
-
 def match_history_worker(args):
     query_data = player.create_player_query_from_template( args[0], args[1], args[2], args[3] )
     res = requests.post(
@@ -21,8 +19,6 @@ def match_history_worker(args):
             raise Exception(f'{player_name} page {page} failed')
     
     return player.parse_player_match_history(json.loads(res.text))
-
-
 
 def aggregate_match_history(player_name, tag_line, num_pages):
     match_histories = []
@@ -42,7 +38,6 @@ def aggregate_match_history(player_name, tag_line, num_pages):
             match_histories.append(m)
 
     return match_histories
-
 
 @dataclass
 class SOA:
@@ -106,7 +101,6 @@ tags = [
         PlayerTag(name='m8r', tag='troll'),
     ]
 
-
 def main():
     start = time.time()
     with multiprocessing.Pool(len(tags)) as pool:
@@ -115,6 +109,10 @@ def main():
             print(f'{tags[i].name}#{tags[i].tag} {results[i]}')
     end = time.time()
     print(end - start)
+    
 if __name__ == '__main__':
-    main()
+    try:
+        main()
+    except Exception as e:
+        print(e)
     
