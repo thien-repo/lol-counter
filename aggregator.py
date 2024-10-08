@@ -103,3 +103,6 @@ def aggregate_worker(pt):
     soa = aos_to_soa_match_histories(match_histories)
     return calculate_player_stats(soa)
 
+def aggregate_players(players):
+     with multiprocessing.Pool(len(players)) as pool:
+        return pool.map(aggregate_worker, players)
