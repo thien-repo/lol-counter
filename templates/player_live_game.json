@@ -1,0 +1,9 @@
+{
+    "operationName": "LiveGameExists",
+    "variables": {
+        "riotUserName": "sumac",
+        "riotTagLine": "spice",
+        "regionId": "na1"
+    },
+    "query": "query LiveGameExists($regionId: String!, $riotUserName: String!, $riotTagLine: String!) {\n  liveGameExists(\n    regionId: $regionId\n    riotUserName: $riotUserName\n    riotTagLine: $riotTagLine\n  )\n}"
+}

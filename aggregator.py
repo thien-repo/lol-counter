@@ -6,6 +6,8 @@ import player
 from collections import Counter
 import multiprocessing
 import time
+import collections
+
 
 def aggregate_match_history(player_name, tag_line, num_pages):
     match_histories = []
@@ -76,7 +78,7 @@ def calculate_player_stats(soa):
     avg_cs = sum( soa.cs ) / soa.size 
     avg_gold = sum( soa.gold ) / soa.size
     avg_vision = sum( soa.vision ) / soa.size
-    most_played_champ = max( set(soa.champion_id),  key=soa.champion_id.count )
+    most_played_champ = (collections.Counter(soa.champion_id).most_common())[:3]
     most_played_role = max( set(soa.role), key=soa.role.count )
     player_type = max( set(soa.queue_type), key=soa.queue_type.count )
 
@@ -104,5 +106,26 @@ def aggregate_worker(pt):
     return calculate_player_stats(soa)
 
 def aggregate_players(players):
-     with multiprocessing.Pool(len(players)) as pool:
+    #return [aggregate_worker(player) for player in players]
+    with multiprocessing.Pool(len(players)) as pool:
         return pool.map(aggregate_worker, players)
+
+
+def normalize(tag, info):
+    def map_champ(champ):
+        ID, games = champ 
+        return config.champion_map[str(ID)], games
+        
+    return [
+        f'{tag.name}#{tag.tag}',
+        info.win,
+        info.kills,
+        info.assists,
+        info.cs,
+        info.vision,
+        info.gold,
+        [ map_champ(champ) for champ in info.champ],
+        info.player_type,
+        config.rolemap.get(str(info.role), str(info.role))
+    ]
+

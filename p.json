@@ -1,0 +1,58 @@
+{
+    "data": {
+        "fetchProfileRanks": {
+            "__typename": "PlayerRank",
+            "rankScores": [
+                {
+                    "__typename": "RankScore",
+                    "lastUpdatedAt": null,
+                    "losses": 9,
+                    "lp": 78,
+                    "promoProgress": null,
+                    "queueType": "ranked_solo_5x5",
+                    "rank": "IV",
+                    "role": null,
+                    "seasonId": 24,
+                    "tier": "GOLD",
+                    "wins": 8
+                },
+                {
+                    "__typename": "RankScore",
+                    "lastUpdatedAt": 0,
+                    "losses": 0,
+                    "lp": 0,
+                    "promoProgress": "",
+                    "queueType": "",
+                    "rank": "",
+                    "role": "",
+                    "seasonId": 0,
+                    "tier": "",
+                    "wins": 0
+                }
+            ]
+        },
+        "profileInitSimple": {
+            "__typename": "ProfileInitSimple",
+            "customizationData": {
+                "__typename": "CustomizationData",
+                "headerBg": ""
+            },
+            "lastModified": "1728508521",
+            "memberStatus": "unverified",
+            "playerInfo": {
+                "__typename": "PlayerInfo",
+                "accountIdV3": 0,
+                "accountIdV4": "",
+                "exodiaUuid": "",
+                "iconId": 3460,
+                "puuidV4": "",
+                "regionId": "na1",
+                "riotTagLine": "spice",
+                "riotUserName": "Sumac",
+                "summonerIdV3": 0,
+                "summonerIdV4": "",
+                "summonerLevel": 338
+            }
+        }
+    }
+}
